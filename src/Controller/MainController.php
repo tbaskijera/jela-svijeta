@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Constraints\RequestConstraints;
 use App\Service\RequestParser;
 use App\Service\ResponseHandler;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -19,7 +20,7 @@ class MainController extends BaseController
     }
 
     #[Route('/api', name: 'handleRequest')]
-    public function handleRequest(Request $request)
+    public function handleRequest(Request $request): JsonResponse
     {
         $constraints = RequestConstraints::getRequestConstraints();
         $params = $this->parser->normalizeInput($request);

@@ -3,11 +3,12 @@
 namespace App\Constraints;
 
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Constraints\Collection;
 use Symfony\Component\Validator\Exception\UnexpectedValueException;
 
 class RequestConstraints
 {
-    public static function getRequestConstraints()
+    public static function getRequestConstraints(): Collection
     {
         return new Assert\Collection([
             'per_page' => new Assert\Optional([
