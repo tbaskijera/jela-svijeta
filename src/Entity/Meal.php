@@ -2,36 +2,56 @@
 
 namespace App\Entity;
 
+use App\Enum\StatusEnum;
 use App\Repository\MealRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
+use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
+use Gedmo\Timestampable\Traits\TimestampableEntity;
+use Symfony\Component\Serializer\Annotation\Groups;
 
+//#[Gedmo\SoftDeleteable(fieldName: 'deletedAt', timeAware: false, hardDelete: true)]
 #[ORM\Entity(repositoryClass: MealRepository::class)]
 class Meal
 {
+    //use TimestampableEntity;
+    //use SoftDeleteableEntity;
+
+    #[Groups('meal')]
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
+    #[Groups('meal')]
     #[ORM\Column(length: 255)]
     private ?string $title = null;
 
+    #[Groups('meal')]
     #[ORM\Column(length: 255)]
     private ?string $description = null;
 
+    #[Groups('meal-category')]
     #[ORM\ManyToOne(inversedBy: 'meals')]
     private ?Category $category = null;
 
+    #[Groups('meal-tags')]
     #[ORM\ManyToMany(targetEntity: Tag::class, inversedBy: 'meals')]
     private Collection $tags;
 
+    #[Groups('meal-ingredients')]
     #[ORM\ManyToMany(targetEntity: Ingredient::class, inversedBy: 'meals')]
     private Collection $ingredients;
 
     #[ORM\OneToMany(mappedBy: 'meal', targetEntity: MealTranslation::class)]
     private Collection $mealTranslations;
+
+    /*
+    #[Groups('meal')]
+    private StatusEnum $status;
+    */
 
     public function __construct()
     {
