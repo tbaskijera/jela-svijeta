@@ -39,6 +39,39 @@ class MealRepository extends ServiceEntityRepository
         }
     }
 
+    public function getFilteredMealsQuery($params)
+    {
+        $category = $params['category'] ?? null;
+        $tags = $params['tags'] ?? null;
+
+        $qb = $this->createQueryBuilder('m');
+
+        if ($category) {
+            if(is_integer($category)) {
+                $qb->andWhere('m.category=:category')
+                    ->setParameter('category', $category);
+            }
+
+            if($category == 'NULL') {
+                $qb->andWhere('m.category IS NULL');
+            }
+
+            if($category == '!NULL') {
+                $qb->andWhere('m.category IS NOT NULL');
+            }
+        }
+
+        if ($tags) {
+            foreach ($tags as $tag) {
+                $qb->join('m.tags', "t$tag")
+                    ->andWhere("t$tag = :tag$tag")
+                    ->setParameter("tag$tag", $tag);
+            }
+        }
+
+        return $qb->getQuery();
+    }
+
 //    /**
 //     * @return Meal[] Returns an array of Meal objects
 //     */
