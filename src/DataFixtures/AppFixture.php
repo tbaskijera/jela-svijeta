@@ -102,10 +102,25 @@ class AppFixture extends Fixture
         for ($i = 1; $i <= 10; $i++) {
             $meal = new Meal();
             $meal->setTitle($faker->getMeal('en'));
-            $meal->setDescription($faker_en->sentence());
-            $meal->setCategory($categories[($i - 1) % count($categories)]);
-            $meal->addTag($tags[($i - 1) % count($tags)]);
-            $meal->addIngredient($ingredients[($i - 1) % count($ingredients)]);
+            $meal->setDescription('Description of meal '.$i.' '.'English');
+
+            $num_categories = $faker->numberBetween(0, 1);
+            $selected_category = $categories[($i - 1) % count($categories)];
+            if ($num_categories == 1) {
+                $meal->setCategory($selected_category);
+            }
+
+            $num_ingredients = $faker->numberBetween(1, count($ingredients));
+            for ($j = 0; $j < $num_ingredients; $j++) {
+                $meal->addIngredient($ingredients[($i - 1 + $j) % count($ingredients)]);
+            }
+
+            $num_tags = $faker->numberBetween(1, count($tags));
+            $selected_tags = $faker->randomElements($tags, $num_tags);
+            foreach ($selected_tags as $tag) {
+                $meal->addTag($tag);
+            }
+
 
             // Create meal translations for each language
             foreach ($languages as $code => $name) {
