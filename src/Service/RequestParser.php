@@ -6,13 +6,6 @@ use Symfony\Component\HttpFoundation\Request;
 
 class RequestParser
 {
-    /*
-    public static function createParser(): RequestParser
-    {
-        return new self();
-    }
-    */
-
     public function normalizeInput(Request $request): array
     {
         $params = [
@@ -21,7 +14,7 @@ class RequestParser
             'category' => $request->query->get('category', null),
             'tags' => $request->query->get('tags', null),
             'with' => $request->query->get('with', null),
-            'lang' => $request->query->get('lang', 'hr'),
+            'lang' => $request->query->get('lang', 'en'),
             'diff_time' => $request->query->getInt('diff_time', 0)
         ];
 
