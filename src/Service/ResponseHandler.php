@@ -7,11 +7,9 @@ use App\Repository\MealRepository;
 use App\Repository\MealTranslationRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Serializer\Context\Normalizer\ObjectNormalizerContextBuilder;
 use Symfony\Component\Serializer\SerializerInterface;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ResponseHandler
 {
@@ -21,13 +19,13 @@ class ResponseHandler
         private IngredientRepository $ingredientRepository,
         private SerializerInterface $serializer,
         private EntityManagerInterface $entityManager,
-        private TranslatorInterface $translator,
         private PaginatorInterface $paginator,
         private urlGeneratorInterface $urlGenerator,
+        private MealTranslator $translator
     ) {
     }
 
-    public function resolve(array $params, Request $request)
+    public function resolve(array $params): array
     {
         $mealsQuery = $this->mealRepository->getFilteredMealsQuery($params);
         $groups = ['meal'];
@@ -35,6 +33,7 @@ class ResponseHandler
         $perPage = $params['per_page'];
         $page = $params['page'];
         $with = $params['with'] ?? null;
+        $locale = $params['lang'];
 
         if($with) {
 
@@ -59,11 +58,7 @@ class ResponseHandler
         $pagination = $this->paginator->paginate($mealsQuery, $page, $perPage);
         $data = $this->serializer->serialize($pagination, 'json', $context);
         $data = json_decode($data);
-
-        foreach ($data as $key => $value) {
-            $translation = $this->translator->trans($value->title, [], 'meals', 'es'); // does not work
-            // $data[$key] = $translation;
-        }
+        $data = $this->translator->translateMealData($data, $locale);
 
         $meta = [
             "currentPage" => $pagination->getCurrentPageNumber(),
@@ -75,6 +70,7 @@ class ResponseHandler
         $links = [
             "previousPage" => null,
             "nextPage" => null,
+            "self" => null
         ];
 
         $json = [
@@ -86,5 +82,4 @@ class ResponseHandler
 
         return $json;
     }
-
 }
