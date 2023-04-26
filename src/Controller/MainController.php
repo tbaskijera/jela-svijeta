@@ -3,12 +3,10 @@
 namespace App\Controller;
 
 use App\Constraints\RequestConstraints;
-use App\Entity\Meal;
 use App\Service\RequestParser;
 use App\Service\ResponseHandler;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -30,7 +28,6 @@ class MainController extends BaseController
 
 
         if (count($violations) > 0) {
-            dd($violations);
             return new JsonResponse($this->handleValidationErrors($violations));
         } else {
             $data = $this->responseHandler->resolve($params, $request);

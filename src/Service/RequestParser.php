@@ -33,26 +33,26 @@ class RequestParser
     {
         if (ctype_digit((string) $category)) {
             return (int) $category;
-        } else {
-            return $category;
         }
+
+        return $category;
     }
 
     private function normalizeTags($tags)
     {
         if ($tags !== null) {
             return array_map('intval', explode(',', $tags));
-        } else {
-            return $tags;
         }
+
+        return $tags;
     }
 
     private function normalizeWith($with)
     {
         if($with !== null) {
             return explode(',', $with);
-        } else {
-            return $with;
         }
+
+        return $with;
     }
 }
