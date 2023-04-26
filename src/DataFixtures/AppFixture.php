@@ -102,7 +102,7 @@ class AppFixture extends Fixture
         for ($i = 1; $i <= 10; $i++) {
             $meal = new Meal();
             $meal->setTitle($faker->getMeal('en'));
-            $meal->setDescription('Description of meal '.$i.' '.'English');
+            $meal->setDescription('Description of meal in English');
 
             $num_categories = $faker->numberBetween(0, 1);
             $selected_category = $categories[($i - 1) % count($categories)];
