@@ -12,12 +12,12 @@ use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
 use Symfony\Component\Serializer\Annotation\Groups;
 
-//#[Gedmo\SoftDeleteable(fieldName: 'deletedAt', timeAware: false, hardDelete: true)]
+#[Gedmo\SoftDeleteable(fieldName: 'deletedAt', timeAware: false, hardDelete: true)]
 #[ORM\Entity(repositoryClass: MealRepository::class)]
 class Meal
 {
-    //use TimestampableEntity;
-    //use SoftDeleteableEntity;
+    use TimestampableEntity;
+    use SoftDeleteableEntity;
 
     #[Groups('meal')]
     #[ORM\Id]
@@ -48,10 +48,10 @@ class Meal
     #[ORM\OneToMany(mappedBy: 'meal', targetEntity: MealTranslation::class)]
     private Collection $mealTranslations;
 
-    /*
+
     #[Groups('meal')]
     private StatusEnum $status;
-    */
+
 
     public function __construct()
     {
@@ -99,6 +99,26 @@ class Meal
         $this->category = $category;
 
         return $this;
+    }
+
+    public function getStatus(): StatusEnum
+    {
+        return $this->status;
+    }
+
+    public function setStatus(?\DateTime $diffTime): void
+    {
+        $this->status = StatusEnum::Created;
+
+        if ($diffTime) {
+            if ($this->updatedAt < $diffTime && $this->updatedAt > $this->createdAt) {
+                $this->status = StatusEnum::Updated;
+            }
+
+            if ($this->deletedAt && $this->deletedAt < $diffTime) {
+                $this->status = StatusEnum::Deleted;
+            }
+        }
     }
 
     /**

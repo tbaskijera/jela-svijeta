@@ -43,6 +43,7 @@ class MealRepository extends ServiceEntityRepository
     {
         $category = $params['category'] ?? null;
         $tags = $params['tags'] ?? null;
+        $diffTime = $params['diffTime'] ?? null;
 
         $qb = $this->createQueryBuilder('m');
 
@@ -67,6 +68,14 @@ class MealRepository extends ServiceEntityRepository
                     ->andWhere("t$tag = :tag$tag")
                     ->setParameter("tag$tag", $tag);
             }
+        }
+
+        if ($diffTime) {
+            $diffTime = date('Y-m-d H:i:s', intval($diffTime));
+            $qb->andWhere('m.createdAt < :diffTime')
+                ->setParameter('diffTime', $diffTime);
+        } else {
+            $qb->andWhere('m.deletedAt IS NULL');
         }
 
         return $qb->getQuery();
